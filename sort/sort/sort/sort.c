@@ -180,13 +180,18 @@ void Bubble_Sort3(uint32* buff, uint32 len)
 void Insert(uint32* buff, uint32 len)
 {
 	uint32 temp;
+	uint32 j;
 	for (uint32 i = 1; i < len; i++)
 	{
 		if (buff[i] < buff[i - 1])    //这里我们只是比较有序数列的最后一个数字（最大的数字）和后面的序列
 		{
-		   temp = buff[i];
-		   for(uint32 j = 0; temp < buff[i-1]; j++)
-                  
+		   temp = buff[i];                  //把这个数存入一个temp 里面 之后前面的数会把这个数字原来的地方覆盖掉
+		   for (j = i; temp > buff[j]||j>=1; j--)  //在有序的数列中找到比这个数大的第一个数 然后把这个位置给到这个数 
+		   {
+			   buff[j] = buff[j - 1];            //把在i之前的数字 往后面一一位。
+		   }
+		   buff[j] = temp;                        //把temp中的元素放到空出的那个位置上面。
+                    
 
 		}
 
@@ -211,7 +216,7 @@ void main(void)
 
 	
 
-	Bubble_Sort3(a, sizeof(a) / sizeof(unsigned int));
+	Insert(a, sizeof(a) / sizeof(unsigned int));
 
 	for (unsigned int i = 0; i < sizeof(a) / sizeof(unsigned int); i++)
 	{
