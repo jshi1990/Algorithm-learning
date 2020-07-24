@@ -140,7 +140,7 @@ void Bubble_Sort2(uint32* buff, uint32 len)
 */
 void Bubble_Sort3(uint32* buff, uint32 len)
 {
-	bool flag = 1;
+	uint8 flag = 1;
 	for (uint32 i = 0; i < len && flag; i++)
 	{
 		for (uint32 j = len - 1; j > i; j--)   //从倒数第一个元素开始进行冒泡的选取和排列
@@ -213,7 +213,53 @@ void Insert(uint32* buff, uint32 len)
 
 
 }
+/*
+下面是希尔排序
+原理 
+我们首先假设现在有的数组是 8 16 1 4 5 2
 
+我们首先先把这个数组分成【8，1，5】 【16，4，2】 
+然后我们对于这里的每个数组进行插入排序
+我们就会得到以下的数组
+【1，5，8】 【2，4，16】
+那么总的数组就会变成
+1 2 5 4 8 16
+然后再进行一次的插入排序即可
+
+
+编程的原理是：
+1. 我们首先把数组分成 小的有间隔的数组 比如上面的数组 我们是每隔一个数字 选取一个数 作为一个数组
+2. 我们分别对分开的数组进行插入排序
+3. 举例如果我们一开始分成了4组 那么第二次排序的时候四组就会变成2组 以此类推 我们最后当组为一组的时候我们就可以最后一次的进行大的插入排序
+4. 请注意插入排序的算法在对有一定顺序的数组进行排序的时候速度十分的快。
+*/
+void Shell_Sort(uint32* buff, uint32 len)
+{
+	uint32 gap = len;
+	uint32 temp ;
+	int j = 0;
+	do{
+		gap = gap / 2 ;                                            //这里面我们把相互隔开的数组定位1 那么我们的第一个选取元素的数组的index就是0 2 4  第二个数组的选取的元素就是1 3 5
+		for (int i = gap; i < len; i++)                          //这里我们开始分别对两个数组进行插入的排序
+		{ 
+			if (buff[i - gap] > buff[i])                        //这个排序我们都是从小到大的排序那么当后面的数字小于前面的数字的话应该做判断。
+			{
+				temp = buff[i];                                //把这个后面的需要调整的数字先保存下来
+				for(j = i - gap; j >= 0 && buff[j] > temp; j =j- gap)
+				{
+					buff[j + gap] = buff[j];                          //这里面会再次进行插入排序
+				
+				}
+				buff[j + gap] = temp;                                //我们这里调用的是直接插入排序
+
+			}
+		}
+	
+	}while (gap >= 1);
+
+
+
+}
 
 #define LONG
 
@@ -222,12 +268,12 @@ void main(void)
 #ifdef LONG
 	unsigned int a[] = { 232,43,5,4312,521,43,324324,564,32,3243,3,4,543,64,2,67234,7,45,67,653,354,54223,4,5,43,561,5,64,213,535,43,43,43,531,4 };
 #else
-	unsigned int a[] = {3,2,1};
+	unsigned int a[] = { 3, 2, 1 };
 #endif // LONG
 
 	
-
-	Insert(a, sizeof(a) / sizeof(unsigned int));
+	//
+	Shell_Sort(a, sizeof(a) / sizeof(unsigned int));
 
 	for (unsigned int i = 0; i < sizeof(a) / sizeof(unsigned int); i++)
 	{
