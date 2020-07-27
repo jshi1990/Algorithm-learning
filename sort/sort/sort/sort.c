@@ -140,7 +140,7 @@ void Bubble_Sort2(uint32* buff, uint32 len)
 */
 void Bubble_Sort3(uint32* buff, uint32 len)
 {
-	bool flag = 1;
+	uint8 flag = 1;
 	for (uint32 i = 0; i < len && flag; i++)
 	{
 		for (uint32 j = len - 1; j > i; j--)   //从倒数第一个元素开始进行冒泡的选取和排列
@@ -213,6 +213,128 @@ void Insert(uint32* buff, uint32 len)
 
 
 }
+/*
+下面是希尔排序
+原理 
+我们首先假设现在有的数组是 8 16 1 4 5 2
+
+我们首先先把这个数组分成【8，1，5】 【16，4，2】 
+然后我们对于这里的每个数组进行插入排序
+我们就会得到以下的数组
+【1，5，8】 【2，4，16】
+那么总的数组就会变成 
+1 2 5 4 8 16
+然后再进行一次的插入排序即可
+
+
+编程的原理是：
+1. 我们首先把数组分成 小的有间隔的数组 比如上面的数组 我们是每隔一个数字 选取一个数 作为一个数组
+2. 我们分别对分开的数组进行插入排序
+3. 举例如果我们一开始分成了4组 那么第二次排序的时候四组就会变成2组 以此类推 我们最后当组为一组的时候我们就可以最后一次的进行大的插入排序
+4. 请注意插入排序的算法在对有一定顺序的数组进行排序的时候速度十分的快。
+
+
+*/
+void Shell_Sort(uint32* buff, uint32 len)
+{
+	uint32 gap = len;
+	uint32 temp ;
+	int j = 0;
+	do{
+		gap = gap / 5 ;                                            //这里面我们把相互隔开的数组定位1 那么我们的第一个选取元素的数组的index就是0 2 4  第二个数组的选取的元素就是1 3 5
+		for (int i = gap; i < len; i++)                          //这里我们开始分别对两个数组进行插入的排序
+		{ 
+			if (buff[i - gap] > buff[i])                        //这个排序我们都是从小到大的排序那么当后面的数字小于前面的数字的话应该做判断。
+			{
+				temp = buff[i];                                //把这个后面的需要调整的数字先保存下来
+				for(j = i - gap; j >= 0 && buff[j] > temp; j =j- gap)
+				{
+					buff[j + gap] = buff[j];                          //这里面会再次进行插入排序
+				
+				}
+				buff[j + gap] = temp;                                //我们这里调用的是直接插入排序
+
+			}
+		}
+	
+	}while (gap >= 1);
+
+
+
+}
+
+/*
+归并排序：
+原理 我们假设我们的数组是 8 16 1 4 5 2
+那我们首先从中间劈开数组 这个数组就变成了 【8 16 1】和 【4 5 2】
+然后我们在分解这个这个数组 就变成了 【8，16】 【1】   【4，5】【2】
+此时我们对每个数组进行排列，这里面我们建立一个新的数组  这个数组会优先的选取比较小的数字存入
+比如说 【8 16】 【1】这部分存入数组就是 
+【1 8 16】
+【4,5】 [2] 这部分在数组里面就是 
+【2,4,5】
+
+然后最后在把这两个已经排序的数组再次放入这个新建立的数组里面去进行最后一次的排序
+得出的结果就是最终的结果
+我们这里首先利用递归的算法去解决。
+
+实际上这个算法就是把整个的数组劈成两两数字比较 然后再归并成两组数组比较，然后再次归并成更大的数列 以此类推。
+
+编程思想：
+1. 我们首先先把数组从中间劈开 
+2. 然后利用递归的思路把这些数组全部分成两两比较的最小数组
+3. 当比较完之后我们利用递归的方式把数组在还原回来
+
+请注意我们这里其实是利用了动态规划的特点去写这个归并的程序。
+不过这个归并的程序需要外部的数组来帮助排序 比较浪费内存 不想希尔排序 内存的复杂度只是1
+
+*/
+
+void merge(uint32* left_buff, uint32 left_len, uint32* right_buff, uint32 right_len)
+{
+	uint32 temp[100] = { 0 };                  //建立一个临时的数组表用于储存排序的数据
+	uint32 i = 0, j = 0, k = 0;
+	while ((j < left_len) && (k < right_len))     //这里面是把小的数存到临时数组的前面。
+	{
+		if (left_buff[j] <= right_buff[k])              //请注意这个函数是归并算法里面真正的排序部分 Merge Sort只是把函数分成了小份儿
+		{
+			temp[i++] = left_buff[j++];
+
+		}
+		if (left_buff[j] > right_buff[k])
+		{
+			temp[i++] = right_buff[k++];
+		}
+
+	}
+	while (j < left_len)                              //把最后剩下的数据写入temp里面
+		temp[i++] = left_buff[j++];
+	while (k < right_len)
+		temp[i++] = right_buff[k++];
+	for (int m = 0; m < left_len + right_len; m++)      // 我们把新排列的数据全部放到左边的数组 用于和新的右边的数组进行新的排序
+		left_buff[m] = temp[m];
+
+}
+
+void Merge_sort(uint32* buff, uint32 len)
+{
+	if (len > 1)  //我们假设我们的排序都是大于1 的数组
+	{
+		uint32 left = len / 2;                              //左边数组的长度
+		uint32 right = len - left;                          //right 数组的长度
+		uint32* left_pointer = buff;                       //需要归并的时候左边的数组的指针
+		uint32* right_pointer = (buff + left);              //需要归并时候右边的数组的指针
+
+		Merge_sort(left_pointer, left);                       //把左边的数组再次的分成小段
+		Merge_sort(right_pointer, right);                     //把右边的数组分成小段
+		merge(left_pointer, left, right_pointer, right);     //把所有的数组进行归并。
+
+
+	}
+
+
+}
+
 
 
 /*
@@ -272,14 +394,14 @@ void Shell_Sort(uint32* buff, uint32 len)
 void main(void)
 {
 #ifdef LONG
-	unsigned int a[] = { 232,43,5,4312,521,43,324324,564,32,3243,3,4,543,64,2,67234,7,45,67,653,354,54223,4,5,43,561,5,64,213,535,43,43,43,531,4 };
+	unsigned int a[] = { 232, 43, 5, 4312, 521, 43, 564, 32, 3243, 3, 4, 543, 64, 2, 67234, 7, 45, 67, 653, 354, 54223, 4, 5, 43, 561, 5, 64, 213, 535, 43, 43, 43, 531, 4 };
 #else
-	unsigned int a[] = {3,2,1};
+	unsigned int a[] = {4,3,2,1};
 #endif // LONG
 
 	
-
-	Insert(a, sizeof(a) / sizeof(unsigned int));
+	//
+	Merge_sort(a, sizeof(a) / sizeof(unsigned int));
 
 	for (unsigned int i = 0; i < sizeof(a) / sizeof(unsigned int); i++)
 	{
