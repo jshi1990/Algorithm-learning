@@ -1,2 +1,4 @@
 ﻿  sort.c
+c:\users\jack.shi\desktop\cpractice\algorithm\algorithm-learning\sort\sort\sort\sort.c(217): warning C4018: '<': signed/unsigned mismatch
+c:\users\jack.shi\desktop\cpractice\algorithm\algorithm-learning\sort\sort\sort\sort.c(281): warning C4018: '<': signed/unsigned mismatch
   sort.vcxproj -> C:\Users\jack.shi\Desktop\Cpractice\algorithm\Algorithm-learning\sort\sort\Debug\sort.exe
