@@ -410,6 +410,44 @@ void My_Quick_Sort(uint32* buff, uint32 len)
 
 }
 
+/*
+堆排序：
+堆排序的定义：
+如果我们的数据此时的序号是k 那么他的父节点就是k/2 他的子节点就是2k和2k+1
+
+编程思想： 加入的数字都是从最下面开始，当加入的数字比最小的数字大，那么他就往父节点交换。
+如果不比父节点大就下沉和子节点进行比较。
+
+
+*/
+void max_heapify(int arr[], int start, int end) {
+	// 建立父節點指標和子節點指標
+	int dad = start;
+	int son = dad * 2 + 1;
+	while (son <= end) { // 若子節點指標在範圍內才做比較
+		if (son + 1 <= end && arr[son] < arr[son + 1]) // 先比較兩個子節點大小，選擇最大的
+			son++;
+		if (arr[dad] > arr[son]) //如果父節點大於子節點代表調整完畢，直接跳出函數
+			return;
+		else { // 否則交換父子內容再繼續子節點和孫節點比较
+			swap(&arr[dad], &arr[son]);
+			dad = son;
+			son = dad * 2 + 1;
+		}
+	}
+}
+
+void heap_sort(uint32* buff, uint32 len) {
+	int i;
+	// 初始化，i從最後一個父節點開始調整
+	for (i = len / 2 - 1; i >= 0; i--)
+		max_heapify(buff, i, len - 1);
+	// 先將第一個元素和已排好元素前一位做交換，再重新調整，直到排序完畢
+	for (i = len - 1; i > 0; i--) {
+		swap(&buff[0], &buff[i]);
+		max_heapify(buff, 0, i - 1);
+	}
+}
 
 #define LONG
 
@@ -423,7 +461,7 @@ void main(void)
 
 
 	//
-	My_Quick_Sort(a, sizeof(a) / sizeof(unsigned int));
+	heap_sort(a, sizeof(a) / sizeof(unsigned int));
 
 	for (unsigned int i = 0; i < sizeof(a) / sizeof(unsigned int); i++)
 	{
