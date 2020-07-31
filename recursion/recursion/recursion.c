@@ -116,3 +116,36 @@ struct ListNode* swapPairs(struct ListNode* head){
 	return p;
 }
 
+/*杨辉三角 II
+Given a non-negative index k where k ≤ 33, return the kth index row of the Pascal's triangle.
+
+Note that the row index starts from 0.
+
+
+In Pascal's triangle, each number is the sum of the two numbers directly above it.
+
+Example:
+
+Input: 3
+Output: [1,3,3,1]
+Follow up:
+
+Could you optimize your algorithm to use only O(k) extra space?*/
+
+class Solution:
+	def getRow(self, rowIndex: int)->List[int] :
+	Row_List = []
+	Row_Pre = []
+	if (rowIndex == 1) :
+		Row_List.append(1)
+		if (rowIndex == 2) :
+			Row_List.append(1)
+			Row_List.append(1)
+
+			Row_Pre = self.getRow(rowIndex - 1)     #get list from previous function
+			for x in range(0, rowIndex) :
+				if x == 0 or x == rowIndex - 1 :
+					a = 1
+					a = Row_Pre[x] + Row_Pre[x - 1]
+					Row_List.append(a)
+					return Row_List
